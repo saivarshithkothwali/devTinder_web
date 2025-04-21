@@ -39,7 +39,7 @@ const Body = () => {
     },[]);
   
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-[#1e1e1e]">
       <NavBar/>
       <Outlet/>
       <Footer/>
