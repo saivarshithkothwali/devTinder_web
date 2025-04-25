@@ -14,8 +14,8 @@ const UserCard = ({user}) => {
     {age && gender && <p>{age +" , "+gender}</p>}
     <p>{about}</p>
     <div className="card-actions justify-center my-4">
-      <button className="btn btn-error">Ignore</button>
-      <button className="btn btn-accent">Interested</button>
+      <button className="btn btn-error">❌Ignore</button>
+      <button className="btn btn-accent">✔️Interested</button>
     </div>
   </div>
 </div>
