@@ -62,12 +62,27 @@ const EditProfile = ({user}) => {
                   <input type="text" value={age} className="input" onChange={(e)=>setAge(e.target.value)}/>
                 </fieldset>
 
-                <fieldset className="fieldset py-3 ">
-                  <legend className="label-text">Gender </legend>
-                  <input type="text" value={gender} className="input" onChange={(e)=>setGender(e.target.value)}/>
-                </fieldset>
+                <fieldset className="fieldset py-3">
+  <legend className="label-text">Gender</legend>
+  
+  <select
+    value={gender}
+    onChange={(e) => setGender(e.target.value)}
+    className="input w-full"
+    style={{ width: '320px' }} // Adjust width as needed
+  >
+    <option value="" disabled>Select Gender</option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+    <option value="other">Other</option>
+  </select>
+</fieldset>
 
-                <fieldset className="fieldset py-3 ">
+
+
+
+
+                <fieldset className="fieldset py-3">
                   <legend className="label-text">About </legend>
                   <input type="text" value={about} className="input" onChange={(e)=>setAbout(e.target.value)}/>
                 </fieldset>
