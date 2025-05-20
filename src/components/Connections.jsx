@@ -3,6 +3,7 @@ import {BASE_URL} from "../utils/constants";
 import { useEffect } from "react";
 import {useDispatch,useSelector} from "react-redux";
 import {addConnections} from "../utils/connectionSlice";
+import { Link } from "react-router-dom";
 
 const Connections = () => {
   const connections=useSelector((store)=>store.connections);
@@ -33,23 +34,32 @@ const Connections = () => {
   
   return (
     <div className="text-center my-10">
-      <h1 className="text-bold text-white text-3xl">Connections</h1>
+      <h1 className="text-bold text-white text-3xl mb-6">Connections</h1>
 
       {connections.map((connection,index)=>{
         const {_id,firstName,lastName,photoUrl,age,gender,about}=connection;
         
-        return(
-        <div key={_id} className="flex m-4 p-4 border rounded-lg bg-base-300 w-1/2 mx-auto">
-          <div><img alt="photo" className="w-20 h-20 rounded-full " src={photoUrl}/></div>
-          
-          <div className="text-left mx-4">
-            <h2 className="font-bold text-xl">{firstName + " " +lastName}</h2>
-            {age && gender && <p>{age+", " +gender}</p>}
-            <p>{about}</p>
-          </div>
+        return (
+          <div key={_id} className="flex justify-between items-center gap-4 mb-4 p-4 rounded-md bg-base-300 w-[95%] max-w-2xl mx-auto">
+            
+            <div className="flex items-start gap-4">
+              <img alt="photo" className="w-12 h-12 rounded-full object-cover" src={photoUrl} />
+              <div className="text-left">
+                <h2 className="font-semibold text-base text-white">{firstName + " " + lastName}</h2>
+                {age && gender && <p className="text-sm text-gray-300">{age + ", " + gender}</p>}
+                <p className="text-sm text-gray-400">{about}</p>
+              </div>
+            </div>
 
-        </div>
+            <Link to={"/chat/"+_id}>
+              <button className="btn btn-soft shadow-md rounded-box transition duration-200 hover:bg-primary hover:text-white hover:scale-105 hover:glass ">
+                Chat</button>
+            </Link>
+
+          </div>
         );
+        
+        
       })}
     </div>
   );
