@@ -10,7 +10,7 @@ import {useEffect} from "react";
 
   const reviewRequest=async(status,_id)=>{
     try{
-      const res=axios.post(BASE_URL+ "/request/review/" +status+ "/" +_id, {}, {withCredentials:true},
+      const res=await axios.post(BASE_URL+ "/request/review/" +status+ "/" +_id, {}, {withCredentials:true},
 
       );
       dispatch(removeRequest(_id));
