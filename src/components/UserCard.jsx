@@ -8,16 +8,23 @@ const UserCard = ({user}) => {
   const {_id,firstName,lastName,age,gender,about,photoUrl}=user;
   const dispatch=useDispatch();
 
-  const handleSendRequest=async(status,userId)=>{
-    try{
-      const res=await axios.post(BASE_URL + "/request/send/" +status+ "/" + userId,{},{withCredentials:true}
-
+  const handleSendRequest = async (status, userId) => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/request/send/${status}/${userId}`,
+        {},
+        { withCredentials: true }
       );
       dispatch(removeUserFromFeed(userId));
-    }catch(err){
-
+    } catch (err) {
+      if (err.response?.data?.message === "Connection Request already exists") {
+        dispatch(removeUserFromFeed(userId));
+      } else {
+        console.error("Request failed:", err.response?.data || err.message);
+      }
     }
-  }
+  };
+  
   return (
     <div className="card bg-base-300 w-96 shadow-sm  ">
   <figure>
