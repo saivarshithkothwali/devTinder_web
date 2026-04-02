@@ -4,6 +4,8 @@ import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
+import {useRef} from"react";
+
 
 const Chat = () => {
   const {targetUserId}=useParams();
@@ -33,11 +35,29 @@ const Chat = () => {
     fetchChatMessages();
   },[]);
 
-  useEffect(()=>{
-    if(!userId){
+  
+  const socketRef = useRef(null);
+  useEffect(() => {
+    if(!userId)
+    {
       return;
     }
-    const socket=createSocketConnection();
+    socketRef.current = createSocketConnection();
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [userId]);
+
+
+  useEffect(() => {
+    if (!targetUserId || !userId) 
+      {
+        return;
+      }
+
+    const socket = socketRef.current;
+
     socket.emit("joinChat",{firstName:user.firstName,lastName:user.lastName,userId,targetUserId});
 
     socket.on("messageReceived",({firstName,lastName,text})=>{
@@ -45,16 +65,41 @@ const Chat = () => {
       setMessages((messages)=>[...messages,{firstName,lastName,text}]);
     });
 
-    return()=>{
-      socket.disconnect();
-    };
-  },[userId,targetUserId]);
+    
+  }, [targetUserId]);
+
+
+  // useEffect(()=>{
+  //   if(!userId){
+  //     return;
+  //   }
+  //   const socket=createSocketConnection();
+  //   socket.emit("joinChat",{firstName:user.firstName,lastName:user.lastName,userId,targetUserId});
+
+  //   socket.on("messageReceived",({firstName,lastName,text})=>{
+  //     console.log(firstName + "  :  " +text);
+  //     setMessages((messages)=>[...messages,{firstName,lastName,text}]);
+  //   });
+
+  //   return()=>{
+  //     socket.disconnect();
+  //   };
+  // },[userId,targetUserId]);
   
   const sendMessage=()=>{
-    const socket=createSocketConnection();
+    if(!newMessage.trim())
+    {
+      return;
+    }
+    const socket=socketRef.current;
+    if(!socket)
+    {
+      return;
+    }
+
     socket.emit("sendMessage",{firstName:user.firstName,userId,targetUserId,text:newMessage});
-    setNewMessage("");
-  }
+    setNewMessage("");//Clears the input box after sending the text message
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto bg-base-200 border border-gray-700 m-5 h-[80vh] flex flex-col shadow-lg rounded-xl">
