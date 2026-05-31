@@ -12,13 +12,15 @@ const Chat = () => {
   const [messages,setMessages]=useState([]);
   const [newMessage,setNewMessage]=useState("");
   const user=useSelector((store)=>store.user);
-  const userId=user?._id;
+  const userId = user?.data?._id;
+
+  
 
   const fetchChatMessages=async()=>{
     const chat=await axios.get(BASE_URL+ "/chat/" +targetUserId,{
       withCredentials:true,
     });
-    console.log(chat.data.messages);
+    
 
     const chatMessages=chat?.data?.messages.map(msg=>{
       const {senderId,text}=msg;
@@ -33,32 +35,47 @@ const Chat = () => {
 
   useEffect(()=>{
     fetchChatMessages();
-  },[]);
+  },[targetUserId]);
 
   
   const socketRef = useRef(null);
   useEffect(() => {
-    if(!userId)
-    {
-      return;
-    }
-    socketRef.current = createSocketConnection();
+  
 
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, [userId]);
+  if (!userId) {
+    
+    return;
+  }
+
+  
+
+  socketRef.current = createSocketConnection();
+
+  
+  return () => {
+   
+    socketRef.current.disconnect();
+  };
+}, [userId]);
 
 
   useEffect(() => {
+    
     if (!targetUserId || !userId) 
       {
+        
         return;
       }
 
     const socket = socketRef.current;
+    if (!socket) {
+    
+    return;
+  }
 
-    socket.emit("joinChat",{firstName:user.firstName,lastName:user.lastName,userId,targetUserId});
+  
+
+    socket.emit("joinChat",{firstName:user.data.firstName,lastName:user.data.lastName,userId,targetUserId});
 
     socket.on("messageReceived",({firstName,lastName,text})=>{
       console.log(firstName + "  :  " +text);
@@ -66,7 +83,7 @@ const Chat = () => {
     });
 
     
-  }, [targetUserId]);
+  }, [targetUserId,userId]);
 
 
   // useEffect(()=>{
@@ -87,17 +104,24 @@ const Chat = () => {
   // },[userId,targetUserId]);
   
   const sendMessage=()=>{
+    
+
     if(!newMessage.trim())
     {
+      
       return;
     }
     const socket=socketRef.current;
+    
     if(!socket)
     {
+      
       return;
     }
 
-    socket.emit("sendMessage",{firstName:user.firstName,userId,targetUserId,text:newMessage});
+    
+
+    socket.emit("sendMessage",{firstName:user.data.firstName, lastName: user.data.lastName,userId,targetUserId,text:newMessage});
     setNewMessage("");//Clears the input box after sending the text message
   };
 
@@ -110,7 +134,7 @@ const Chat = () => {
 
         {messages.map((msg,index)=>{
           return(
-            <div key={index} className={"chat " +(user.firstName===msg.firstName? "chat-end" :"chat-start")}>
+            <div key={index} className={"chat " +(user?.data?.firstName===msg.firstName? "chat-end" :"chat-start")}>
               <div className="chat-image avatar">
                 <div className="w-10 rounded-full">
                   <img
